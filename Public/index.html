@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencarian Lokasi | Aplikasi Geolokasi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+ 
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+ 
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+        }
+ 
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+            padding: 40px;
+            animation: slideUp 0.6s ease-out;
+        }
+ 
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+ 
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+ 
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+ 
+        .user-info h5 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+ 
+        .user-info .name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+ 
+        .user-info .nim {
+            font-size: 16px;
+            font-weight: 500;
+        }
+ 
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 10px;
+        }
+ 
+        .subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-top: 8px;
+        }
+ 
+        .search-section {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+ 
+        input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+ 
+        input:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+ 
+        input::placeholder {
+            color: #aaa;
+        }
+ 
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+ 
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+ 
+        button:active {
+            transform: translateY(0);
+        }
+ 
+        .error-msg {
+            background: #fee;
+            color: #d32f2f;
+            padding: 14px 16px;
+            border-radius: 12px;
+            display: none;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d32f2f;
+            animation: slideDown 0.3s ease;
+        }
+ 
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+ 
+        .result-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #fafbfc 100%);
+            border-radius: 15px;
+            padding: 0;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+ 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+ 
+        .result-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+ 
+        .result-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+ 
+        .result-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+ 
+        .data-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+ 
+        .data-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+ 
+        .data-item.full-width {
+            grid-column: 1 / -1;
+        }
+ 
+        .data-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+ 
+        .data-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            word-break: break-word;
+        }
+ 
+        .coords {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 15px;
+            border-radius: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+ 
+        .coord-box {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+ 
+        .coord-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+ 
+        .coord-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+        }
+ 
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+ 
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+ 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+ 
+        @media (max-width: 480px) {
+            .card {
+                padding: 25px;
+            }
+ 
+            .title {
+                font-size: 24px;
+            }
+ 
+            .result-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+ 
+    <div class="main-container">
+        <div class="card">
+            <div class="header">
+                <div class="user-info">
+                    <h5>Identitas Pengguna</h5>
+                    <div class="name">Muhammad Wafa Rozanu</div>
+                    <div class="nim">NIM: 20240140115</div>
+                </div>
+                <h1 class="title">Pencari Lokasi</h1>
+                <p class="subtitle">Temukan informasi detail tentang lokasi Anda</p>
+            </div>
+ 
+            <div class="search-section">
+                <input type="text" id="inputLokasi" placeholder="Contoh: Bantul, Jakarta, Surabaya...">
+                <button onclick="cariLokasi()">Cari</button>
+            </div>
+ 
+            <div id="loadingMsg" class="loading">
+                <span class="spinner"></span>Mencari lokasi...
+            </div>
+ 
+            <div id="errorMsg" class="error-msg">
+                ❌ Lokasi tidak ditemukan. Coba nama kota yang berbeda!
+            </div>
+ 
+            <div class="result-card" id="resultCard">
+                <div class="result-header">
+                    <h3 id="resLokasi">-</h3>
+                </div>
+                <div class="result-content">
+                    <div class="data-item">
+                        <div class="data-label">Kecamatan/Kota</div>
+                        <div class="data-value" id="resKecamatan">-</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Provinsi</div>
+                        <div class="data-value" id="resProvinsi">-</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Negara</div>
+                        <div class="data-value" id="resNegara">-</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Status</div>
+                        <div class="data-value">✓ Ditemukan</div>
+                    </div>
+ 
+                    <div class="coords">
+                        <div class="coord-box">
+                            <div class="coord-label">Longitude</div>
+                            <div class="coord-value" id="resLon">-</div>
+                        </div>
+                        <div class="coord-box">
+                            <div class="coord-label">Latitude</div>
+                            <div class="coord-value" id="resLat">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+        function cariLokasi() {
+            const kotaInput = document.getElementById("inputLokasi").value;
+            const errorMsg = document.getElementById("errorMsg");
+            const loadingMsg = document.getElementById("loadingMsg");
+            const resultCard = document.getElementById("resultCard");
+ 
+            if (!kotaInput) {
+                alert("Masukkan nama kota dulu!");
+                return;
+            }
+ 
+            // Tampilkan loading, sembunyikan error dan result
+            loadingMsg.style.display = "block";
+            errorMsg.style.display = "none";
+            resultCard.style.display = "none";
+ 
+            fetch(`/api/lokasi?kota=${encodeURIComponent(kotaInput)}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Data tidak ditemukan");
+                    return response.json();
+                })
+                .then(data => {
+                    // Masukkan data ke HTML
+                    document.getElementById("resLokasi").innerText = data.lokasi;
+                    document.getElementById("resKecamatan").innerText = data.kecamatan;
+                    document.getElementById("resProvinsi").innerText = data.provinsi;
+                    document.getElementById("resNegara").innerText = data.negara;
+                    document.getElementById("resLon").innerText = data.longitude.toFixed(5);
+                    document.getElementById("resLat").innerText = data.latitude.toFixed(5);
+ 
+                    loadingMsg.style.display = "none";
+                    errorMsg.style.display = "none";
+                    resultCard.style.display = "block";
+                })
+                .catch(error => {
+                    console.error(error);
+                    loadingMsg.style.display = "none";
+                    errorMsg.style.display = "block";
+                    resultCard.style.display = "none";
+                });
+        }
+ 
+        // Tekan Enter untuk search
+        document.getElementById("inputLokasi").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                cariLokasi();
+            }
+        });
+    </script>
+ 
+</body>
+</html>
+ 
